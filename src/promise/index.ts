@@ -285,25 +285,13 @@ export class _Promise {
   finally(callback: () => void) {
     return this.then(
       (val) => {
-        return _Promise.resolve(callback()).then(() => val);
+        return Promise.resolve(callback()).then(() => val);
       },
       (reason) => {
-        return _Promise.resolve(callback()).then(() => {
+        return Promise.resolve(callback()).then(() => {
           throw reason;
         });
       }
     );
   }
-}
-
-/**================================== race 超时应用 **/
-function withAbort<T>(userPromise: Promise<T>) {
-  let abort;
-  let innerPromise = new Promise((resolve, reject) => {
-    abort = reject;
-  });
-  const res = Promise.race([innerPromise, userPromise]);
-  (res as any).abort = abort;
-
-  return res;
 }
