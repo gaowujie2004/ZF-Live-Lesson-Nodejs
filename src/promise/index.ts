@@ -144,6 +144,63 @@ export class _Promise {
     });
   }
 
+  // 只要有一个 reject，则 all() 返回 这个失败的promise
+  // 都为成功，all() 返回成功的，val 是数组按照顺序的 val
+  static all(promiseList: _Promise[]) {
+    return new _Promise((resolve, reject) => {
+      const resList = [];
+      let count = 0;
+      promiseList.forEach((p, pIndex) => {
+        // then callback 是异步的
+        Promise.resolve(p).then(
+          (val) => {
+            resList[pIndex] = val;
+            if (++count >= promiseList.length) {
+              // todo: 不能使用 resList.length
+              // 所以 let count 一个计数器
+              resolve(resList);
+            }
+          },
+          reject
+          // (reason) => {
+          //   reject(reason);
+          // }
+        );
+      });
+    });
+  }
+
+  static allSettled(promiseList: _Promise[]) {
+    return new _Promise((resolve) => {
+      const resList = [];
+      let count = 0;
+
+      function processMap(key, val) {
+        resList[key] = val;
+        if (++count >= promiseList.length) {
+          resolve(resList);
+        }
+      }
+
+      promiseList.forEach((p, pIndex) => {
+        Promise.resolve(p).then(
+          (value) => {
+            processMap(pIndex, {
+              value,
+              status: State.Fulfilled,
+            });
+          },
+          (reason) => {
+            processMap(pIndex, {
+              reason,
+              status: State.Rejected,
+            });
+          }
+        );
+      });
+    });
+  }
+
   /**
    * then() 返回 Promise 实例，实例的状态和结果，
    * let p = new Promise((resolve, reject) => {.....})
