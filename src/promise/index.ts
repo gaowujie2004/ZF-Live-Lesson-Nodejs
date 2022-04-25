@@ -111,20 +111,19 @@ export class _Promise {
     }
   }
 
+  // todo: YYDS
   static resolve(val: any) {
     if (val instanceof _Promise) {
       return val;
     }
-    return new _Promise((resolve, reject) => {
+
+    return new _Promise((resolve) => {
       resolve(val);
     });
   }
 
   static reject(reason: any) {
-    if (reason instanceof _Promise) {
-      return reason;
-    }
-    return new _Promise((resolve, reject) => {
+    return new _Promise((_, reject) => {
       reject(reason);
     });
   }
@@ -203,10 +202,15 @@ export class _Promise {
 }
 
 /**================================== Test **/
-let p = new _Promise((resolve, reject) => {
-  resolve(111);
+let p = _Promise.resolve(_Promise.resolve(_Promise.resolve(9000)));
+
+//从右往左，执行的。
+// 打印 9000
+p.then((val) => {
+  console.log(val);
 });
 
-p.then().then((val) => {
-  console.log('----', val);
+let p2 = _Promise.resolve(_Promise.reject(11111));
+p2.then(null, (reason) => {
+  console.log('p2-- reject', reason);
 });
