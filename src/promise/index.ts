@@ -152,7 +152,7 @@ export class _Promise {
       let count = 0;
       promiseList.forEach((p, pIndex) => {
         // then callback 是异步的
-        Promise.resolve(p).then(
+        _Promise.resolve(p).then(
           (val) => {
             resList[pIndex] = val;
             if (++count >= promiseList.length) {
@@ -183,7 +183,7 @@ export class _Promise {
       }
 
       promiseList.forEach((p, pIndex) => {
-        Promise.resolve(p).then(
+        _Promise.resolve(p).then(
           (value) => {
             processMap(pIndex, {
               value,
@@ -197,6 +197,15 @@ export class _Promise {
             });
           }
         );
+      });
+    });
+  }
+
+  // race() 的返回值是 promiseLIst 中第一个改变状态的那个 promise 副本
+  static race(promiseList: _Promise[]) {
+    return new _Promise((resolve, reject) => {
+      promiseList.forEach((p) => {
+        _Promise.resolve(p).then(resolve, reject);
       });
     });
   }
@@ -315,10 +324,10 @@ export class _Promise {
   finally(callback: () => void) {
     return this.then(
       (val) => {
-        return Promise.resolve(callback()).then(() => val);
+        return _Promise.resolve(callback()).then(() => val);
       },
       (reason) => {
-        return Promise.resolve(callback()).then(() => {
+        return _Promise.resolve(callback()).then(() => {
           throw reason;
         });
       }
@@ -343,7 +352,7 @@ p2.then(null, (reason) => {
 _Promise
   .reject(55555)
   .finally(() => {
-    return new Promise((r) => {
+    return new _Promise((r) => {
       setTimeout(r, 4000);
     });
   })
