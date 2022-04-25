@@ -17,6 +17,8 @@ const enum State {
   Rejected = 'Rejected',
 }
 
+const noop = (() => {}) as (val: any) => any;
+
 export class _Promise {
   protected state = State.Pending;
   protected result: any = undefined;
@@ -85,7 +87,8 @@ export class _Promise {
         this.onFulfillCallbacks.push((val) => {
           setTimeout(() => {
             try {
-              const x = onFulfill(val);
+              const fn = onFulfill || noop;
+              const x = fn(val);
               resolvePromise(promise2, x, resolve, reject);
             } catch (err) {
               reject(err);
@@ -95,7 +98,8 @@ export class _Promise {
         this.onRejectCallbacks.push((reason) => {
           setTimeout(() => {
             try {
-              const x = onReject(reason);
+              const fn = onReject || noop;
+              const x = fn(reason);
               resolvePromise(promise2, x, resolve, reject);
             } catch (err) {
               reject(err);
