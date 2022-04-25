@@ -128,6 +128,22 @@ export class _Promise {
     });
   }
 
+  static resolveSleep(val?: any, duration = 1500) {
+    return new _Promise((r) => {
+      setTimeout(() => {
+        r(val);
+      }, duration);
+    });
+  }
+
+  static rejectSleep(val?: any, duration = 1500) {
+    return new _Promise((_, reject) => {
+      setTimeout(() => {
+        reject(val);
+      }, duration);
+    });
+  }
+
   /**
    * then() 返回 Promise 实例，实例的状态和结果，
    * let p = new Promise((resolve, reject) => {.....})
