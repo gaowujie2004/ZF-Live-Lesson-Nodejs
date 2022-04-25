@@ -87,8 +87,7 @@ export class _Promise {
         this.onFulfillCallbacks.push((val) => {
           setTimeout(() => {
             try {
-              const fn = onFulfill || noop;
-              const x = fn(val);
+              const x = onFulfill(val);
               resolvePromise(promise2, x, resolve, reject);
             } catch (err) {
               reject(err);
@@ -98,8 +97,7 @@ export class _Promise {
         this.onRejectCallbacks.push((reason) => {
           setTimeout(() => {
             try {
-              const fn = onReject || noop;
-              const x = fn(reason);
+              const x = onReject(reason);
               resolvePromise(promise2, x, resolve, reject);
             } catch (err) {
               reject(err);
