@@ -199,6 +199,58 @@ export class _Promise {
 
     return promise2;
   }
+
+  /**
+   * @return Promise 实例
+   * return Promise 状态由 onReject 决定，和 then 一样
+   */
+  catch(onReject: (reason: any) => any) {
+    // 不用再判断非法值，因为 then 内部会做处理
+    return this.then(undefined, onReject);
+  }
+
+  /**
+   * todo: 坑
+   * p.finally(......) 返回的是 p
+   * 如果这样那就有问题了，正确的 Promise，是会等待 finally callback 的promise
+   * 只不过不使用 finally callback return 的值
+   *
+   * Promise
+   *  .reject(55555)
+   *  .finally(() => {
+   *     return new Promise(r => {
+   *        setTimeout(r, 4000)
+   *     })
+   *   })
+   *  .catch(reason => console.log('catch --', reason))  // 输出 5555
+   */
+  finallyError(callback: () => void) {
+    this.then(
+      () => {
+        callback();
+      },
+      () => {
+        callback();
+      }
+    );
+
+    return this;
+  }
+
+  // p.finally(......) 返回的是 p
+  // this -> p
+  finally(callback: () => void) {
+    return this.then(
+      (val) => {
+        return Promise.resolve(callback()).then(() => val);
+      },
+      (reason) => {
+        return Promise.resolve(callback()).then(() => {
+          throw reason;
+        });
+      }
+    );
+  }
 }
 
 /**================================== Test **/
@@ -214,3 +266,12 @@ let p2 = _Promise.resolve(_Promise.reject(11111));
 p2.then(null, (reason) => {
   console.log('p2-- reject', reason);
 });
+
+_Promise
+  .reject(55555)
+  .finally(() => {
+    return new Promise((r) => {
+      setTimeout(r, 4000);
+    });
+  })
+  .catch((reason) => console.log('catch --', reason)); // 输出 5555
