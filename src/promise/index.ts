@@ -133,7 +133,7 @@ export class _Promise {
    * let p = new Promise((resolve, reject) => {.....})
    * let p2 = p.then( val => {...} )
    *  p2 的状态由 回调函数返回值决定，回调函数返回值：
-   *    1、基本知识
+   *    1、基本类型
    *    2、promise 实例
    * @return Promise
    */
