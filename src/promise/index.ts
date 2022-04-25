@@ -111,6 +111,24 @@ export class _Promise {
     }
   }
 
+  static resolve(val: any) {
+    if (val instanceof _Promise) {
+      return val;
+    }
+    return new _Promise((resolve, reject) => {
+      resolve(val);
+    });
+  }
+
+  static reject(reason: any) {
+    if (reason instanceof _Promise) {
+      return reason;
+    }
+    return new _Promise((resolve, reject) => {
+      reject(reason);
+    });
+  }
+
   /**
    * then() 返回 Promise 实例，实例的状态和结果，
    * let p = new Promise((resolve, reject) => {.....})
