@@ -334,6 +334,17 @@ export class _Promise {
     );
   }
 }
+/**================================== race 超时应用 **/
+function withAbort<T>(userPromise: Promise<T>) {
+  let abort;
+  let innerPromise = new Promise((resolve, reject) => {
+    abort = reject;
+  });
+  const res = Promise.race([innerPromise, userPromise]);
+  (res as any).abort = abort;
+
+  return res;
+}
 
 /**================================== Test **/
 let p = _Promise.resolve(_Promise.resolve(_Promise.resolve(9000)));
