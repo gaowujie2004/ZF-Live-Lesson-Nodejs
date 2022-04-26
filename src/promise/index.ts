@@ -149,6 +149,28 @@ export class _Promise {
     });
   }
 
+  static async retry(
+    fn: () => _Promise,
+    options: {
+      count: number;
+      interval?: number;
+    },
+    retryAction?: () => void
+  ) {
+    const { count, interval = 0 } = options || {};
+    for (let i = 1; i <= count; i++) {
+      try {
+        await fn();
+        return true;
+      } catch (err) {
+        retryAction();
+        if (i === count) {
+          return _Promise.reject(err);
+        }
+      }
+    }
+  }
+
   /**
    * then() 返回 Promise 实例，实例的状态和结果，
    * let p = new Promise((resolve, reject) => {.....})
@@ -273,6 +295,7 @@ export class _Promise {
     );
   }
 }
+
 /**================================== race 超时应用 **/
 function withAbort<T>(userPromise: Promise<T>) {
   let abort;
@@ -284,26 +307,3 @@ function withAbort<T>(userPromise: Promise<T>) {
 
   return res;
 }
-
-/**================================== Test **/
-let p = _Promise.resolve(_Promise.resolve(_Promise.resolve(9000)));
-
-//从右往左，执行的。
-// 打印 9000
-p.then((val) => {
-  console.log(val);
-});
-
-let p2 = _Promise.resolve(_Promise.reject(11111));
-p2.then(null, (reason) => {
-  console.log('p2-- reject', reason);
-});
-
-_Promise
-  .reject(55555)
-  .finally(() => {
-    return new _Promise((r) => {
-      setTimeout(r, 4000);
-    });
-  })
-  .catch((reason) => console.log('catch --', reason)); // 输出 5555
