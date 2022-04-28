@@ -24,7 +24,7 @@ const _Event = (function () {
     removeAll;
 
   listen = (key, fn) => {
-    if (!salesOffices.clientMap[key]) {
+    if (!clientMap[key]) {
       // 第一次订阅，需要创建一个 该类型的 缓存列表
       clientMap[key] = [];
     }
