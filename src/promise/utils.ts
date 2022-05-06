@@ -93,10 +93,3 @@ export function resolvePromise(promise2, x, resolve, reject) {
 }
 
 export function asyncSleep() {}
-
-// Promise
-//   .resolve(1)
-//   .then(val => _Promise.resolve())
-//   .then(val => {
-
-//   })

@@ -147,7 +147,7 @@ export class _Promise {
   }
 
   // todo: YYDS
-  static resolve(val: any) {
+  static resolve(val?: any) {
     if (val instanceof _Promise) {
       return val;
     }
