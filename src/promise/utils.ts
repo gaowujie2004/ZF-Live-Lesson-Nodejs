@@ -32,22 +32,8 @@ export function resolvePromise(promise2, x, resolve, reject) {
 
   // x 可能是个promise，引用类型
   if ((typeof x === 'object' && x !== null) || typeof x === 'function') {
-    // promise 的实例可能是别人的 API 生成的。
-    // 也就是 _Promise.resolve(1).then( val => Promise.resolve(90999999)  )
-    /**
-     * ```js
-     * _Promise
-     *  .resolve(1)
-     *  .then(val => {
-     *    return new Promise((resolve, reject) => {
-     *      resolve(1);
-     *      reject(2222);
-     *    })
-     *  })
-     * ```
-     */
-    // todo: ！！！！！！！！！ 不懂
-    // let called = false;
+    // todo: 防止别人写的 Promise resolve/reject 方法内部没有多次调用的限制
+    let called = false;
 
     // x.then 可能是个 getter 那就可能会报错
     try {
@@ -61,14 +47,14 @@ export function resolvePromise(promise2, x, resolve, reject) {
           (y) => {
             // y 啥？ x promise 的结果值。
             // x promise 的结果值作为 promise2 的值
-            // if (called) return;
-            // called = true;
+            if (called) return;
+            called = true;
             resolvePromise(promise2, y, resolve, reject);
           },
           (r) => {
             // 同理 r，和 y 是一样的道理
-            // if (called) return;
-            // called = true;
+            if (called) return;
+            called = true;
             // todo: 遇到错误直接改变状态，不像 resolve 那样，深度解析
             reject(r);
           }
@@ -82,8 +68,8 @@ export function resolvePromise(promise2, x, resolve, reject) {
       }
     } catch (err) {
       // x.then getter 报错，可能用的是别人的 promise 实例
-      // if (called) return;
-      // called = true;
+      if (called) return;
+      called = true;
       reject(err);
     }
   } else {
