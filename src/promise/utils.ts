@@ -47,7 +47,7 @@ export function resolvePromise(promise2, x, resolve, reject) {
      * ```
      */
     // todo: ！！！！！！！！！ 不懂
-    let called = false;
+    // let called = false;
 
     // x.then 可能是个 getter 那就可能会报错
     try {
@@ -61,14 +61,14 @@ export function resolvePromise(promise2, x, resolve, reject) {
           (y) => {
             // y 啥？ x promise 的结果值。
             // x promise 的结果值作为 promise2 的值
-            if (called) return;
-            called = true;
+            // if (called) return;
+            // called = true;
             resolvePromise(promise2, y, resolve, reject);
           },
           (r) => {
             // 同理 r，和 y 是一样的道理
-            if (called) return;
-            called = true;
+            // if (called) return;
+            // called = true;
             // todo: 遇到错误直接改变状态，不像 resolve 那样，深度解析
             reject(r);
           }
@@ -82,8 +82,8 @@ export function resolvePromise(promise2, x, resolve, reject) {
       }
     } catch (err) {
       // x.then getter 报错，可能用的是别人的 promise 实例
-      if (called) return;
-      called = true;
+      // if (called) return;
+      // called = true;
       reject(err);
     }
   } else {
