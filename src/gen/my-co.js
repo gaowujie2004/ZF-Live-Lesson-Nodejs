@@ -1,3 +1,5 @@
+// co 就是迭代 gen 函数的
+
 const fs = require('fs/promises');
 const path = require('path');
 
@@ -66,6 +68,8 @@ co(read())
   .catch((reason) => {
     console.log('--遍历器 ERR', reason);
   });
+
+// todo: 缺点，还得用 co 嵌套一下
 
 // const it = read();
 // console.log('--第一次', it.next());
