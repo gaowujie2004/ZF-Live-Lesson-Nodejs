@@ -19,6 +19,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
 
 // co
 function _asyncToGenerator(fn) {
+  // fn 是 generator 函数
   return function () {
     var self = this,
       args = arguments;
@@ -41,6 +42,7 @@ function read() {
 
 function _read() {
   _read = _asyncToGenerator(
+    // mark 就是内部处理一下原型链，然后返回回调函数 _callee
     regeneratorRuntime.mark(function _callee() {
       var name, userInfo;
       return regeneratorRuntime.wrap(function _callee$(_context) {
