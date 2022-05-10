@@ -15,6 +15,10 @@ export class _Promise {
 
   constructor(execute: (resolve: (v: any) => void, reject: (r: any) => void) => void) {
     const resolve = (value: any) => {
+      if (this.state !== State.Pending) {
+        return;
+      }
+
       if (value instanceof _Promise) {
         // todo: 费脑筋
         return value.then(resolve, reject);
@@ -28,10 +32,6 @@ export class _Promise {
             reject(reason);
           }
         );
-      }
-
-      if (this.state !== State.Pending) {
-        return;
       }
 
       this.state = State.Fulfilled;
