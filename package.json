@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test:promise": "promises-aplus-tests ./src/promise/base"
+    "test:promise": "promises-aplus-tests ./src/promise/__test__/temp_base.js"
   },
   "devDependencies": {
     "@types/node": "^17.0.25",
