@@ -43,6 +43,12 @@ reject 直接失败，不继续解析。
 race 超时处理
 withAbort (模拟 promise 中断，并不是真正的中断)
 
+# 5-11 fs 模块
+
+1. 树，二叉搜索树，4 种遍历
+2. 文件夹递归删除
+3. 文件夹递归创建？
+
 # 代码仓库
 
 https://gitee.com/jw-speed/jiagouke4-23-node
