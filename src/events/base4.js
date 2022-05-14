@@ -14,7 +14,7 @@ EventEmit.prototype.on = function (key, callback) {
   if (!this._events[key]) {
     this._events[key] = [];
   }
-
+  this.emit('newListener', key);
   this._events[key].push(callback);
 };
 
@@ -75,17 +75,4 @@ EventEmit.prototype.once = function (key, callback) {
   this._events[key].push(one);
 };
 
-/**================================== 测试 EventEmit **/
-let e1 = new EventEmit();
-
-function open(data) {
-  console.log("OPEN 被触发了", data);
-}
-
-e1.once("open", open);
-
-// e1.off("open", open);
-// open 被 包裹到了 one 中
-
-e1.emit("open", "hhhh 参数1");
-e1.emit("open", "hhhh 参数2");
+module.exports = EventEmit;
