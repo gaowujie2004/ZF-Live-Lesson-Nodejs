@@ -1,4 +1,4 @@
-const Event = require('events');
+const Event = require('../base4.js');
 
 let e = new Event();
 
