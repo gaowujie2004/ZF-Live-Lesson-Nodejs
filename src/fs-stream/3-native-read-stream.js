@@ -10,12 +10,11 @@ const ReadStream = require('./6-my-read-stream');
  */
 // new ReadStream
 // fs.createReadStream
-const rs = new ReadStream(join('./test/cn'), {
+const rs = fs.createReadStream(join('./test/cn'), {
   start: 0,
   end: 6, // 包后0-5，6字节，省略就是到文件末尾
   flags: 'r', // default, 读取操作
-  highWaterMark: 2, // 默认64kb，每次读取文件的字节数
-  encoding: null, // 默认是二进制数据，如果要读取文本数据，可以指定解码
+  encoding: undefined, // 默认是二进制数据，如果要读取文本数据，可以指定解码
   mode: undefined, // 文件权限
   emitClose: true,
   // rwx_rwx_rwx
@@ -23,6 +22,10 @@ const rs = new ReadStream(join('./test/cn'), {
   // r -> 4
   // w -> 2
   // x -> 1
+
+  highWaterMark: 2, // 默认64kb，每次读取文件的字节数
+  // todo: 如果水平线是 100 byte，但 start，end 指定的很小，那肯定不能创建 100 byte 的Buf，
+  // 所以最终 buffer 的大小是要结合 start end 以及文件位置的偏移量算
 });
 
 // 文件的可读流才具备open事件
@@ -32,7 +35,7 @@ rs.on('open', (fd) => {
 
 // 绑定了 data 才开始读
 rs.on('data', (dataByte) => {
-  console.log('--data: ', dataByte.toString());
+  console.log('--data: ', dataByte);
 });
 
 rs.on('error', (err) => {

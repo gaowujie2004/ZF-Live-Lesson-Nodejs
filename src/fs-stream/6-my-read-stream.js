@@ -72,7 +72,7 @@ class ReadStream extends EventEmit {
         byteRead = bytesRead;
 
         if (bytesRead) {
-          this.emit('data', buffer.slice(0, bytesRead));
+          this.emit('data', buffer.slice(0, bytesRead)); // 不包尾部
         } else {
           this.emit('end');
           this.destroy();
