@@ -11,7 +11,7 @@ class ReadStream extends EventEmit {
     this.path = path;
     this.flags = options.flags || 'r';
     this.encoding = options.encoding || null;
-    this.emitClose = options.emitClose || false;
+    this.emitClose = options.emitClose || true;
     this.start = options.start || 0;
     this.end = options.end; // todo: 重点去弄
     this.highWaterMark = options.highWaterMark || 64 * 1024;
@@ -41,19 +41,18 @@ class ReadStream extends EventEmit {
   // 因为 open 和 read 分开了，所以要处理一下依赖，read 依赖 open 的 fd
   async open() {
     try {
-      const { close, read, fd } = await fs.open(this.path);
-      this.fd = fd;
-      this._close = close;
-      this._read = read;
-      this.emit('open', fd);
+      const FileHandle = await fs.open(this.path);
+      this.fd = FileHandle.fd;
+      this._close = FileHandle.close.bind(FileHandle);
+      this._read = FileHandle.read.bind(FileHandle);
+      this.emit('open', FileHandle.fd);
     } catch (err) {
       this.destroy(err);
     }
   }
 
   async read() {
-    const fd = this.fd;
-    if (typeof fd !== 'number') {
+    if (typeof this.fd !== 'number') {
       this.once('open', () => this.read());
       return;
     }
@@ -61,7 +60,7 @@ class ReadStream extends EventEmit {
     const read = this._read;
     let byteRead = 1;
     try {
-      while (byteRead) {
+      while (byteRead && this.flowing) {
         const howMou = this.end
           ? Math.min(this.end - this._offset + 1, this.highWaterMark)
           : this.highWaterMark;
@@ -70,11 +69,13 @@ class ReadStream extends EventEmit {
 
         const { bytesRead } = await read(buffer, 0, buffer.byteLength, this._offset);
         this._offset += bytesRead;
-        this.emit('data', buffer.slice(0, bytesRead)); // 同步调用
         byteRead = bytesRead;
 
-        if (!this.flowing) {
-          return;
+        if (bytesRead) {
+          this.emit('data', buffer.slice(0, bytesRead));
+        } else {
+          this.emit('end');
+          this.destroy();
         }
       }
     } catch (err) {
@@ -87,15 +88,18 @@ class ReadStream extends EventEmit {
   }
 
   resume() {
-    if (!this.flowing) {
+    if (this.flowing) {
       return;
     }
-    // this.flowing -> true
+    // this.flowing -> false
     this.flowing = true;
     this.read();
   }
 
   async destroy(err) {
+    // 销毁，fd
+    this.fd = undefined;
+
     if (err) {
       this.emit('error', err);
     }
