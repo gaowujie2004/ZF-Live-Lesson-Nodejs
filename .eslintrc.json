@@ -1,12 +1,16 @@
 {
   "root": true,
   "env": {
-    "es6": true
+    "es6": true,
+    "browser": true,
+    "node": true
   },
+
   "parserOptions": {
     "ecmaVersion": 2021
   },
   "rules": {
+    "no-undef": "warn",
     "max-len": [
       "warn",
       {
