@@ -91,7 +91,7 @@ export class _Promise {
       let count = 0;
       promiseList.forEach((p, pIndex) => {
         // then callback 是异步的
-        _Promise.resolve(p).then(
+        Promise.resolve(p).then(
           (val) => {
             resList[pIndex] = val;
             if (++count >= promiseList.length) {
@@ -122,7 +122,7 @@ export class _Promise {
       }
 
       promiseList.forEach((p, pIndex) => {
-        _Promise.resolve(p).then(
+        Promise.resolve(p).then(
           (value) => {
             processMap(pIndex, {
               value,
@@ -138,37 +138,6 @@ export class _Promise {
         );
       });
     });
-  }
-
-  // race() 的返回值是 promiseLIst 中第一个改变状态的那个 promise 副本
-  static race(promiseList: _Promise[]) {
-    return new _Promise((resolve, reject) => {
-      promiseList.forEach((p) => {
-        _Promise.resolve(p).then(resolve, reject);
-      });
-    });
-  }
-
-  static async retry(
-    fn: () => _Promise,
-    options: {
-      count: number;
-      interval?: number;
-    },
-    retryAction?: () => void
-  ) {
-    const { count, interval = 0 } = options || {};
-    for (let i = 1; i <= count; i++) {
-      try {
-        await fn();
-        return true;
-      } catch (err) {
-        retryAction();
-        if (i === count) {
-          return _Promise.reject(err);
-        }
-      }
-    }
   }
 
   /**

@@ -17,6 +17,8 @@ const enum State {
   Rejected = 'Rejected',
 }
 
+const noop = (() => {}) as (val: any) => any;
+
 export class _Promise {
   protected state = State.Pending;
   protected result: any = undefined;
