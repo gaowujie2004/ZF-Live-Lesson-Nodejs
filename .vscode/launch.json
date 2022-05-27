@@ -8,7 +8,7 @@
       "type": "pwa-node",
       "request": "launch",
       "name": "Current File",
-      "skipFiles": ["<node_internals>/**"],
+      // "skipFiles": ["<node_internals>/**"], // 不断点node源代码，比如 require
       "program": "${file}"
     }
   ]
