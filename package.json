@@ -8,7 +8,6 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.25",
-    "eslit": "^6.0.0",
     "promises-aplus-tests": "^2.1.2",
     "typescript": "^4.6.3"
   },
