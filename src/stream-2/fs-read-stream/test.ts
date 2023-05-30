@@ -25,3 +25,13 @@ buffer1[0] = 90; // 修改 buffer1 的第一个字节为 ASCII 码 72，即字�
 
 console.log(buffer1.toString()); // 输出: Hello, world!
 console.log(buffer2.toString()); // 输出: hello, world!
+
+/**================================== TEST2 **/
+const rs = fs.createReadStream(path.join(__dirname, './mock-zh.txt'), {
+  highWaterMark: 2,
+});
+
+rs.on('readable', () => {
+  let result = rs.read(6);
+  console.log(result?.toString(), result?.length);
+});
